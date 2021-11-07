@@ -23,6 +23,7 @@
   "dependencies": {
     "glob": "^7.2.0",
     "isomorphic-ws": "^4.0.1",
+    "level": "^7.0.1",
     "lorem-ipsum": "^2.0.4",
     "modapp": "^2.5.0",
     "modapp-l10n": "^1.7.0",

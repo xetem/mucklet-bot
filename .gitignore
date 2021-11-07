@@ -2,7 +2,7 @@
 node_modules
 /coverage
 /devcfg
-/devstore
+/cinnabarapts
 
 # misc
 .DS_Store

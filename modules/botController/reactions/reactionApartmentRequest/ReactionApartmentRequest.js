@@ -1,6 +1,6 @@
 import replaceTags from '#utils/replaceTags.js';
 import findById from '#utils/findById.js';
-import {fs} from 'fs';
+import level from 'level';
 
 // Sleep helper function
 function sleep(ms) {
@@ -19,6 +19,7 @@ class ReactionApartmentRequest {
 	 */
 	constructor(app, params) {
 		this.app = app;
+		this.db = level('cinnabarapts');
 
 		this.app.require([ 'botController', 'charEvents', 'actionAddress' ], this._init);
 	}
@@ -161,44 +162,24 @@ class ReactionApartmentRequest {
 	}
 
 	_alreadyHasApartment(charId) {
-        let _return = false;
-        fs.readFile('../../../../devstore/units.json', 'utf8', (err, data) => {
-            if (err) {
-                console.log(`Error reading file from disk: ${err}`);
-            } else {
-                console.log("Read DB from /devstore/units.json");
-                _return = JSON.parse(data).some(elem => elem.charId === charId);
-            }
-        });
-        return _return;
+		if(this.db.get(charId, (err, value) => {
+			if(err) return console.log(`Error reading from db: ${err}`);
+			console.log(`Apartment Unit for ${charId}: ${value}`);
+		}) !== null){
+			return true;
+		}
+		return false;
 	}
 
 	_getNextApartmentNumber(charId) {
-        let db = [];
-        let _return = {charId, apartment};
-        fs.readFile('../../../../devstore/units.json', 'utf8', (err, data) => {
-            if (err) {
-                console.log(`Error reading file from disk: ${err}`);
-            } else {
-                console.log("Read DB from /devstore/units.json");
-                db = JSON.parse(data);
-                _return = db.find(elem => elem.charId === "NEXT");
-            }
-        });
-        let index = db.findIndex(elem => elem.charId === "NEXT");
-        db[index].apartment = this._incrementApartment(db[index].apartment);
-        db.push({
-            charId: charId,
-            apartment: _return.apartment
-        });
-        fs.writeFile('../../../../devstore/units.json', JSON.stringify(db), 'utf8', (err) => {
-            if(err) {
-                console.log(`Error writing to /devstore/units.json: ${err}`);
-            } else {
-                console.log("Wrote DB to /devstore/units.json");
-            }
-        });
-		return _return.apartment;
+		let next = this.db.get('NEXT', (err, value) => {
+			if(err) return console.log(`Error reading from db: ${err}`);
+			console.log(`Next apartment unit: ${value}`);
+		})
+        this.db.del('NEXT'); //This may be optional
+		this.db.put('NEXT', this._incrementApartment(next));
+		this.db.put(charId, next);
+		return next;
 	}
 
     _incrementApartment(current) {
@@ -218,6 +199,7 @@ class ReactionApartmentRequest {
 	dispose() {
 		this.module.charEvents.unsubscribe(this._onCharEvent);
 		this.module.botController.removeAction('createApartment');
+		this.db.close();
 	}
 
 }
