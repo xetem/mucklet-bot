@@ -49,7 +49,7 @@ class ReactionApartmentRequest {
 			this.module.actionAddress.enqueue(
 				char.id,
 				ev.char.id,
-				replaceTags("looks confused. ((Type `address {name} = I would like to lease an apartment.`))", ev.char),
+				replaceTags("looks confused. ((Type `address C1-P1 = I would like to lease an apartment.`))", ev.char),
 				true,
 				100
 			);
