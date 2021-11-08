@@ -19,7 +19,21 @@ class ReactionApartmentRequest {
 	 */
 	constructor(app, params) {
 		this.app = app;
-		this.db = level('cinnabarapts');
+		this.db = level('cinnabarapts', async function (err, db) {
+			if (err) throw err;
+
+			await db.get('NEXT', async function (err, value) {
+				if(err) {
+					await db.put('NEXT', '1E');
+					await db.put('c2i9uh0t874bj4evc090', '1A');
+					await db.put('c2kcgjgt874bj4evchf0', '1B');
+					await db.put('RESERVED', '1C');
+					await db.put('c31sr90t874d92krcahg', '1D');
+					return console.log(`No apartments found in db, starting from 1E: ${err}`);
+				}
+				return console.log(`Found apartments in db, resuming from ${value}.`);
+			})
+		});
 
 		this.app.require([ 'botController', 'charEvents', 'actionAddress' ], this._init);
 	}
@@ -36,7 +50,7 @@ class ReactionApartmentRequest {
 		this.module.charEvents.subscribe(this._onCharEvent);
 	}
 
-	_onCharEvent = (char, ev) => {
+	_onCharEvent = async (char, ev) => {
 		// Bot only cares about messages addressed to self.
 		if (ev.type != 'address' || ev.target.id != char.id) {
 			return;
@@ -57,7 +71,7 @@ class ReactionApartmentRequest {
 		}
 
 		// Check if we already have an apartment
-		if (this._alreadyHasApartment(ev.char.id)) {
+		if (await this._alreadyHasApartment(ev.char.id)) {
 			this.module.actionAddress.enqueue(
 				char.id,
 				ev.char.id,
@@ -74,7 +88,7 @@ class ReactionApartmentRequest {
 		this.module.botController.enqueue('createApartment', {
 			charId: char.id,
 			target: ev.char,
-			unitNr: String(this._getNextApartmentNumber(char.id)),
+			unitNr: String(await this._getNextApartmentNumber(char.id)),
 			delay: 1000,
 			postdelay: 2000,
 			priority: 20
@@ -96,22 +110,22 @@ class ReactionApartmentRequest {
 			msg: "Sure thing, let me get that ready for you.",
 			charId: target.id,
 		});
-		await sleep(1000);
+		await sleep(5000);
 		await char.call('useExit', { exitKey: 'out' });
-		await sleep(1000);
+		await sleep(5000);
 		await char.call('useExit', { exitKey: 'up' });
-		await sleep(1000);
+		await sleep(5000);
 		let area = await char.call('createArea', {
 			name: `Apartment ${unitNr}`,
 			ParentID: char.inRoom.area.id
 		});
-		await sleep(1000);
+		await sleep(5000);
 		await char.call('setLocation', {
 			locationId: area.id,
 			type: 'area',
 			private: true
 		});
-		await sleep(1000);
+		await sleep(5000);
 		let createExitResult = await char.call('createExit', {
 			keys:  [ unitNr, target.name + " " + target.surname ],
 			name: `Apartment ${unitNr}`,
@@ -120,15 +134,15 @@ class ReactionApartmentRequest {
 			travelMsg: `goes inside apartment ${unitNr}`,
 			hidden: true
 		});
-		await sleep(1000);
+		await sleep(5000);
 		await char.call('useExit', { exitKey: unitNr });
-		await sleep(1000);
+		await sleep(5000);
 		await char.call('setRoom', {
 			name: `Apartment ${unitNr}`,
 			desc: "The apartment is empty.",
 			areaId: area.id
 		});
-		await sleep(1000);
+		await sleep(5000);
 		await char.call('setExit', {
 			exitKey: 'back',
 			name: 'To Hallway',
@@ -137,18 +151,19 @@ class ReactionApartmentRequest {
 			arriveMsg: `arrives from apartment ${unitNr}.`,
 			travelMsg: "leaves the apartment."
 		});
-		await sleep(2000);
+		await sleep(5000);
 		await char.call('requestSetRoomOwner', {
 			roomId: createExitResult.targetRoom.id,
 			charId: target.id
 		});
+		await sleep(5000);
 		await char.call('requestSetAreaOwner', {
 			areaId: area.id,
 			charId: target.id
 		});
-		await sleep(1000);
+		await sleep(5000);
 		await char.call('teleportHome');
-		await sleep(3000);
+		await sleep(5000);
 		await char.call('address', {
 			msg: replaceTags("says ,\"Alright, you’re all set up with your new apartment. Here are your keys, you’re in unit {unitNr} Thank you for choosing Cinnabar Prism Apartments, we hope you enjoy your stay. Feel free to have a look around the facilities.\"\n((You can get there with the commands: `go out`, `go up`, `go apartment {unitNr}` (or alternatively `go {charName} {charSurname}` or simply `go {unitNr}`) ))\n((Make sure to accept the room and area requests in the Realm panel to the far left.))", {
 				unitNr,
@@ -161,35 +176,32 @@ class ReactionApartmentRequest {
 
 	}
 
-	_alreadyHasApartment(charId) {
-		if(this.db.get(charId, (err, value) => {
-			if(err) return console.log(`Error reading from db: ${err}`);
-			console.log(`Apartment Unit for ${charId}: ${value}`);
-		}) !== null){
-			return true;
+	async _alreadyHasApartment(charId) {
+		try {
+			let r = await this.db.get(charId);
+			if (r) return true;
+			return false;
+		} catch (err) {
+			console.log(`No apartment found for character ${charId}: ${err}`);
+			return false;
 		}
-		return false;
 	}
 
-	_getNextApartmentNumber(charId) {
-		let next = this.db.get('NEXT', (err, value) => {
-			if(err) return console.log(`Error reading from db: ${err}`);
-			console.log(`Next apartment unit: ${value}`);
-		})
-        this.db.del('NEXT'); //This may be optional
-		this.db.put('NEXT', this._incrementApartment(next));
-		this.db.put(charId, next);
+	async _getNextApartmentNumber(charId) {
+		let next = await this.db.get('NEXT');
+		await this.db.put(charId, next);
+		await this.db.put('NEXT', this._incrementApartment(next));
 		return next;
 	}
 
     _incrementApartment(current) {
         if (current.charAt(current.length - 1) === 'Z') {
-            text = text.replace(/(\d+)/, function(r) {
+            current = current.replace(/(\d+)/g, function(r) {
                 return +r+1;
             });
-            text = text.replace('Z', 'A');
+            current = current.replace('Z', 'A');
         } else {
-            text = text.replace(/([A-Z])/, function(r) {
+            current = current.replace(/([A-Z])/g, function(r) {
                 return String.fromCharCode(r.charCodeAt(0)+1);
             });
         }
