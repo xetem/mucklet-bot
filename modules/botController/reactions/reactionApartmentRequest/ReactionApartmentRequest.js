@@ -178,7 +178,6 @@ class ReactionApartmentRequest {
 				pose: true,
 				charId: target.id
 			});
-			this.allowance = 0; // This is the know result of the above.
 			await this.db.put(target.id, unitNr);
 		} catch (err) {
 			await char.call('teleportHome');
@@ -193,6 +192,8 @@ class ReactionApartmentRequest {
 			});
 			await this.db.del(target.id);
 			await this.db.put('NEXT', unitNr); // Replace the unit on NEXT
+		} finally {
+			this.allowance = 0; // This is the know result of the above, either path.
 		}
 	}
 
