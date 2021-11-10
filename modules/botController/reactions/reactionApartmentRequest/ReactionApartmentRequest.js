@@ -20,18 +20,17 @@ class ReactionApartmentRequest {
 	constructor(app, params) {
 		this.app = app;
 		this.allowance = 100000; // 100 second time allotment 
-		this.date = new Date();
-		this.time = date.getTime();
+		this.time = Date.now();
 		this.db = level('cinnabarapts', async function (err, db) {
 			if (err) throw err;
 
 			await db.get('NEXT', async function (err, value) {
 				if(err) {
 					await db.put('NEXT', '1E');
-					await db.put('c2i9uh0t874bj4evc090', '1A');
-					await db.put('c2kcgjgt874bj4evchf0', '1B');
-					await db.put('RESERVED', '1C');
-					await db.put('c31sr90t874d92krcahg', '1D');
+					await db.put('c2i9uh0t874bj4evc090', '1A'); // Xetem Ilekex is predefined as per the lore
+					await db.put('c2kcgjgt874bj4evchf0', '1B'); // Cyran Bizeth is predefined as per the lore
+					await db.put('RESERVED', '1C'); // Another character is predefined as per the lore
+					await db.put('c31sr90t874d92krcahg', '1D'); // Cirrhen Ilekex is predefined as per the lore
 					return console.log(`No apartments found in db, starting from 1E: ${err}`);
 				}
 				return console.log(`Found apartments in db, resuming from ${value}.`);
@@ -63,7 +62,7 @@ class ReactionApartmentRequest {
 		if (!ev.msg.match(/\b(lease|rent|available|free)( an)? +apartments?\b/)
 			&& !ev.msg.match(/\bapartments? *(available\b|to rent\b|to lease\b|free)\b/)
 		) {
-			this._checkAllowance(7000);
+			await this._checkAllowance(7000);
 			this.module.actionAddress.enqueue(
 				char.id,
 				ev.char.id,
@@ -77,7 +76,7 @@ class ReactionApartmentRequest {
 
 		// Check if we already have an apartment
 		if (await this._alreadyHasApartment(ev.char.id)) {
-			this._checkAllowance(7000);
+			await this._checkAllowance(7000);
 			this.module.actionAddress.enqueue(
 				char.id,
 				ev.char.id,
@@ -110,81 +109,91 @@ class ReactionApartmentRequest {
 		}
 		let { unitNr, target } = outcome;
 
-		this._checkAllowance(100000);
-		await char.call('address', {
-			msg: "Sure thing, let me get that ready for you.",
-			charId: target.id,
-		});
-		await sleep(1000);
-		await char.call('useExit', { exitKey: 'out' });
-		await sleep(1000);
-		await char.call('useExit', { exitKey: 'up' });
-		await sleep(1000);
-		let area = await char.call('createArea', {
-			name: `Apartment ${unitNr}`,
-			ParentID: char.inRoom.area.id
-		});
-		await sleep(1000);
-		await char.call('setLocation', {
-			locationId: area.id,
-			type: 'area',
-			private: true
-		});
-		await sleep(1000);
-		let createExitResult = await char.call('createExit', {
-			keys:  [ unitNr, target.name + " " + target.surname ],
-			name: `Apartment ${unitNr}`,
-			leaveMsg: `goes inside apartment ${unitNr}.`,
-			arriveMsg: "enters the apartment from the hallway.",
-			travelMsg: `goes inside apartment ${unitNr}`,
-			hidden: true
-		});
-		await sleep(1000);
-		await char.call('useExit', { exitKey: unitNr });
-		await sleep(1000);
-		await char.call('setRoom', {
-			name: `Apartment ${unitNr}`,
-			desc: "The apartment is empty.",
-			areaId: area.id
-		});
-		await sleep(1000);
-		await char.call('setExit', {
-			exitKey: 'back',
-			name: 'To Hallway',
-			keys: [ 'exit', 'out', 'hall', 'hallway' ],
-			leaveMsg: "leaves the apartment.",
-			arriveMsg: `arrives from apartment ${unitNr}.`,
-			travelMsg: "leaves the apartment."
-		});
-		await sleep(3000);
-		await char.call('requestSetRoomOwner', {
-			roomId: createExitResult.targetRoom.id,
-			charId: target.id
-		});
-		await sleep(1000);
-		await char.call('requestSetAreaOwner', {
-			areaId: area.id,
-			charId: target.id
-		});
-		await sleep(1000);
-		await char.call('teleportHome');
-		await sleep(1000);
-		await char.call('address', {
-			msg: replaceTags("says ,\"Alright, you’re all set up with your new apartment. Here are your keys, you’re in unit {unitNr} Thank you for choosing Cinnabar Prism Apartments, we hope you enjoy your stay. Feel free to have a look around the facilities.\"\n((You can get there with the commands: `go out`, `go up`, `go apartment {unitNr}` (or alternatively `go {charName} {charSurname}` or simply `go {unitNr}`) ))\n((Make sure to accept the room and area requests in the Realm panel to the far left.))\n\n((I will now go in sleep mode, it may take some time for me to respond to more requests. Zzz.))", {
-				unitNr,
-				charName: target.name,
-				charSurname: target.surname
-			}),
-			pose: true,
-			charId: target.id
-		});
-		this.allowance = 0; // This is the know result of the above.
-		if(await this.db.get(target.id) === 'WAITING') {
-			// The db failed to update
-			console.log("Error updating db with new unit, deleting row.");
+		try{
+			await this._checkAllowance(100000);
+			await char.call('address', {
+				msg: "Sure thing, let me get that ready for you. Please remain here while I do so. ((Leaving the room before I return will result in an error state.))",
+				charId: target.id,
+			});
+			await sleep(1000);
+			await char.call('useExit', { exitKey: 'out' });
+			await sleep(1000);
+			await char.call('useExit', { exitKey: 'up' });
+			await sleep(1000);
+			let area = await char.call('createArea', {
+				name: `Apartment ${unitNr}`,
+				ParentID: char.inRoom.area.id
+			});
+			await sleep(1000);
+			await char.call('setLocation', {
+				locationId: area.id,
+				type: 'area',
+				private: true
+			});
+			await sleep(1000);
+			let createExitResult = await char.call('createExit', {
+				keys:  [ unitNr, target.name + " " + target.surname ],
+				name: `Apartment ${unitNr}`,
+				leaveMsg: `goes inside apartment ${unitNr}.`,
+				arriveMsg: "enters the apartment from the hallway.",
+				travelMsg: `goes inside apartment ${unitNr}`,
+				hidden: true
+			});
+			await sleep(1000);
+			await char.call('useExit', { exitKey: unitNr });
+			await sleep(1000);
+			await char.call('setRoom', {
+				name: `Apartment ${unitNr}`,
+				desc: "The apartment is empty.",
+				areaId: area.id
+			});
+			await sleep(1000);
+			await char.call('setExit', {
+				exitKey: 'back',
+				name: 'To Hallway',
+				keys: [ 'exit', 'out', 'hall', 'hallway' ],
+				leaveMsg: "leaves the apartment.",
+				arriveMsg: `arrives from apartment ${unitNr}.`,
+				travelMsg: "leaves the apartment."
+			});
+			await sleep(3000);
+			await char.call('requestSetRoomOwner', {
+				roomId: createExitResult.targetRoom.id,
+				charId: target.id
+			});
+			await sleep(1000);
+			await char.call('requestSetAreaOwner', {
+				areaId: area.id,
+				charId: target.id
+			});
+			await sleep(1000);
+			await char.call('teleportHome');
+			await sleep(1000);
+			await char.call('address', {
+				msg: replaceTags("says ,\"Alright, you’re all set up with your new apartment. Here are your keys, you’re in unit {unitNr} Thank you for choosing Cinnabar Prism Apartments, we hope you enjoy your stay. Feel free to have a look around the facilities.\"\n((You can get there with the commands: `go out`, `go up`, `go apartment {unitNr}` (or alternatively `go {charName} {charSurname}` or simply `go {unitNr}`) ))\n((Make sure to accept the room and area requests in the Realm panel to the far left.))\n\n((I will now go in sleep mode, it may take some time for me to respond to more requests. Zzz.))", {
+					unitNr,
+					charName: target.name,
+					charSurname: target.surname
+				}),
+				pose: true,
+				charId: target.id
+			});
+			this.allowance = 0; // This is the know result of the above.
+			await this.db.put(target.id, unitNr);
+		} catch (err) {
+			await char.call('teleportHome');
+			await sleep(1000);
+			await char.call('address', {
+				msg: replaceTags("says, \"I am so sorry, {charName} There seems to have been an issue, please send Xetem Ilekex a message letting him know you had an issue. ((use `mail Xetem Ilekex = I had a problem leasing an apartment. The error was: '{err}'` or similar if he's not online))\"", {
+					charName: target.name,
+					err: err._message
+				}),
+				pose: true,
+				charId: target.id
+			});
 			await this.db.del(target.id);
+			await this.db.put('NEXT', unitNr); // Replace the unit on NEXT
 		}
-
 	}
 
 	async _alreadyHasApartment(charId) {
@@ -201,7 +210,6 @@ class ReactionApartmentRequest {
 
 	async _getNextApartmentNumber(charId) {
 		let next = await this.db.get('NEXT');
-		await this.db.put(charId, next);
 		await this.db.put('NEXT', this._incrementApartment(next));
 		return next;
 	}
@@ -222,12 +230,12 @@ class ReactionApartmentRequest {
 
 	_updateAllowance() {
 		let old = this.time;
-		this.time = date.getTime();
+		this.time = Date.now();
 		let difference = Math.floor((this.time - old) / 1000) * 1000; // round to the most recent second
 		this.allowance = Math.min(this.allowance + difference, 100000); // allowance cannot exceed 100 seconds
 	}
 
-	_checkAllowance(cost) {
+	async _checkAllowance(cost) {
 		this._updateAllowance();
 		if(this.allowance < cost) {
 			await sleep(Math.min(this.allowance - cost, 100000)); // will never have to sleep more than 100 seconds to recover
