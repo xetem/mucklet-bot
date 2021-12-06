@@ -5,6 +5,9 @@
 <dd><p>Api module connects to the backend api and provides low level
 methods for service modules to send and receive data.</p>
 </dd>
+<dt><a href="#ActionAddress">ActionAddress</a></dt>
+<dd><p>ActionAddress adds the action to speak in a room with other characters.</p>
+</dd>
 <dt><a href="#ActionCreateChar">ActionCreateChar</a></dt>
 <dd><p>ActionCreateChar adds the action to create a character if the limit is not reached.</p>
 </dd>
@@ -44,6 +47,9 @@ bot-characters to perform.</p>
 <dt><a href="#Personality">Personality</a></dt>
 <dd><p>Personality holds common personality traits that an action can use to
 determine behavior.</p>
+</dd>
+<dt><a href="#ReactionApartmentRequest">ReactionApartmentRequest</a></dt>
+<dd><p>ReactionApartmentRequest reacts to an apartment request.</p>
 </dd>
 <dt><a href="#ReactionArriveWelcome">ReactionArriveWelcome</a></dt>
 <dd><p>ReactionArriveWelcome greets when traveling to a room with other characters.</p>
@@ -159,6 +165,62 @@ Sets the onConnect callback.
 | Param | Type | Description |
 | --- | --- | --- |
 | onConnect | <code>ResClient~onConnectCallback</code> | On connect callback called prior resolving the connect promise and subscribing to stale resources. May return a promise. |
+
+<a name="ActionAddress"></a>
+
+## ActionAddress
+ActionAddress adds the action to speak in a room with other characters.
+
+**Kind**: global class  
+
+* [ActionAddress](#ActionAddress)
+    * [new ActionAddress(app, params)](#new_ActionAddress_new)
+    * _instance_
+        * [.enqueue(charId, targetId, msg, pose, priority)](#ActionAddress+enqueue)
+    * _inner_
+        * [~Params](#ActionAddress..Params) : <code>Object</code>
+
+<a name="new_ActionAddress_new"></a>
+
+### new ActionAddress(app, params)
+Creates a new ActionAddress instance.
+
+
+| Param | Type | Description |
+| --- | --- | --- |
+| app | <code>App</code> | Modapp App object. |
+| params | [<code>Params</code>](#ActionAddress..Params) | Module parameters. |
+
+<a name="ActionAddress+enqueue"></a>
+
+### actionAddress.enqueue(charId, targetId, msg, pose, priority)
+Enqueues a address action to the botController.
+
+**Kind**: instance method of [<code>ActionAddress</code>](#ActionAddress)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| charId | <code>string</code> | Character ID. |
+| targetId | <code>string</code> | Target character ID. |
+| msg | <code>string</code> | Message to address. |
+| pose | <code>boolean</code> | Flag if message is posed. |
+| priority | <code>number</code> | Priority of the action. |
+
+<a name="ActionAddress..Params"></a>
+
+### ActionAddress~Params : <code>Object</code>
+ActionAddress parameters.
+
+**Kind**: inner typedef of [<code>ActionAddress</code>](#ActionAddress)  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| [populationProbability] | <code>object</code> | Probabilities of the action to occur based on room population. |
+| [delay] | <code>number</code> | Additional delay in milliseconds to wait prior to executing the action. |
+| [postdelay] | <code>number</code> | Delay in milliseconds to wait after executing the action. |
+| [phrases] | <code>Array.&lt;string&gt;</code> | An array of phrases to use as message. Null means random lorem ipsum. |
+| [chars] | <code>Array.&lt;string&gt;</code> | An array of chars eligible to be addressed to. Null means any. |
 
 <a name="ActionCreateChar"></a>
 
@@ -785,6 +847,23 @@ Personality parameters.
 | --- | --- | --- |
 | [typeSpeed] | <code>number</code> | Type speed in characters per minute. |
 | [readSpeed] | <code>number</code> | Read speed in characters per minute. |
+
+<a name="ReactionApartmentRequest"></a>
+
+## ReactionApartmentRequest
+ReactionApartmentRequest reacts to an apartment request.
+
+**Kind**: global class  
+<a name="new_ReactionApartmentRequest_new"></a>
+
+### new ReactionApartmentRequest(app, params)
+Creates a new ReactionApartmentRequest instance.
+
+
+| Param | Type | Description |
+| --- | --- | --- |
+| app | <code>App</code> | Modapp App object. |
+| params | <code>ReactionApartmentRequest~Params</code> | Module parameters. |
 
 <a name="ReactionArriveWelcome"></a>
 

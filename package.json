@@ -5,6 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "wolfery": "node index.js devcfg/config-chippy.js",
     "build:docs": "jsdoc2md ./modules/**/*.js > ./docs/modules.md"
   },
   "repository": {
