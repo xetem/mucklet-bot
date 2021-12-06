@@ -88,6 +88,8 @@ class ReactionApartmentRequest {
 			return;
 		}
 
+		//TODO: Check if supplied with a room ID to connect instead of creating a new apartment.
+
 		// We could just call the API directly with the steps. But by letting
 		// botController perform them as an action, we can be sure the bot only
 		// creates one apartment at a time.
