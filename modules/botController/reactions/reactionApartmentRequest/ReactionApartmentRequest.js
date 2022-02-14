@@ -117,22 +117,22 @@ class ReactionApartmentRequest {
 				msg: "Sure thing, let me get that ready for you. Please remain here while I do so. ((Leaving the room before I return will result in an error state.))",
 				charId: target.id,
 			});
-			await sleep(1000);
+			await sleep(1500);
 			await char.call('useExit', { exitKey: 'out' });
-			await sleep(1000);
+			await sleep(1500);
 			await char.call('useExit', { exitKey: 'up' });
-			await sleep(1000);
+			await sleep(1500);
 			let area = await char.call('createArea', {
 				name: `Apartment ${unitNr}`,
 				ParentID: char.inRoom.area.id
 			});
-			await sleep(1000);
+			await sleep(1500);
 			await char.call('setLocation', {
 				locationId: area.id,
 				type: 'area',
 				private: true
 			});
-			await sleep(1000);
+			await sleep(1500);
 			let createExitResult = await char.call('createExit', {
 				keys:  [ unitNr, target.name + " " + target.surname ],
 				name: `Apartment ${unitNr}`,
@@ -141,15 +141,15 @@ class ReactionApartmentRequest {
 				travelMsg: `goes inside apartment ${unitNr}`,
 				hidden: true
 			});
-			await sleep(1000);
+			await sleep(1500);
 			await char.call('useExit', { exitKey: unitNr });
-			await sleep(1000);
+			await sleep(1500);
 			await char.call('setRoom', {
 				name: `Apartment ${unitNr}`,
 				desc: "The apartment is empty.",
 				areaId: area.id
 			});
-			await sleep(1000);
+			await sleep(1500);
 			await char.call('setExit', {
 				exitKey: 'back',
 				name: 'To Hallway',
@@ -158,19 +158,19 @@ class ReactionApartmentRequest {
 				arriveMsg: `arrives from apartment ${unitNr}.`,
 				travelMsg: "leaves the apartment."
 			});
-			await sleep(3000);
+			await sleep(4000);
 			await char.call('requestSetRoomOwner', {
 				roomId: createExitResult.targetRoom.id,
 				charId: target.id
 			});
-			await sleep(1000);
+			await sleep(1500);
 			await char.call('requestSetAreaOwner', {
 				areaId: area.id,
 				charId: target.id
 			});
-			await sleep(1000);
+			await sleep(1500);
 			await char.call('teleportHome');
-			await sleep(1000);
+			await sleep(1500);
 			await char.call('address', {
 				msg: replaceTags("says ,\"Alright, you’re all set up with your new apartment. Here are your keys, you’re in unit {unitNr} Thank you for choosing Cinnabar Prism Apartments, we hope you enjoy your stay. Feel free to have a look around the facilities.\"\n((You can get there with the commands: `go out`, `go up`, `go apartment {unitNr}` (or alternatively `go {charName} {charSurname}` or simply `go {unitNr}`) ))\n((Make sure to accept the room and area requests in the Realm panel to the far left.))\n\n((I will now go in sleep mode, it may take some time for me to respond to more requests. Zzz.))", {
 					unitNr,
@@ -183,7 +183,7 @@ class ReactionApartmentRequest {
 			await this.db.put(target.id, unitNr);
 		} catch (err) {
 			await char.call('teleportHome');
-			await sleep(1000);
+			await sleep(5000);
 			await char.call('address', {
 				msg: replaceTags("says, \"I am so sorry, {charName} There seems to have been an issue, please send Xetem Ilekex a message letting him know you had an issue. ((use `mail Xetem Ilekex = I had a problem leasing an apartment. The error was: '{err}'` or similar if he's not online))\"", {
 					charName: target.name,
