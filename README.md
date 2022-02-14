@@ -16,7 +16,7 @@ Multiple environment variables are set up in the docker image to pass through to
 | --- | --- | --- | --- |
 | `API_HOST_URL` | `wss://test.mucklet.com` | `wss://api.wolfery.com` | The host url for the api. |
 | `API_WEB_RESOURCE_PATH` | `https://test.mucklet.com/api/` | `https://api.wolfery.com/api/` | The resource url for the api. |
-| `API_ORIGIN` | `https://mucklet.com` | default | `https://wolfery.com` | The host url of the site. |
+| `API_ORIGIN` | `https://mucklet.com` | `https://wolfery.com` | The host url of the site. |
 | `LOGIN_USER` \*Required | Mucklet.com username | Wolfery.com username | The username of the controlling account. |
 | `LOGIN_PASS` \*Required | hashed Mucklet.com password | hashed Wolfery.com password | The password of the controlling account, sha256 hashed and base64 encoded. |
 | `BOT_CONTROLLER_INCLUDE_CHARS` | `` `[ 'c62rjs0t874cqited7b0' ]` `` | default | An array character id's to select from when choosing a character to wake up and control. |
