@@ -174,6 +174,8 @@ class ReactionApartmentRequest {
 			await sleep(1500);
 			await char.call('useExit', { exitKey: 'up' });
 			await sleep(1500);
+			await char.call('useExit', { exitKey: 'up' });
+			await sleep(1500);
 			let area = await char.call('createArea', {
 				name: `${unitNr}`,
 				ParentID: char.inRoom.area.id
