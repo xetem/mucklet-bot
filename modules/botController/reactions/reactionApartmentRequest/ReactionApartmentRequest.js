@@ -126,7 +126,7 @@ class ReactionApartmentRequest {
 			this.allowance -= 7000;
 			this.inAptPass = true;
 		} else if (this.inAptPass){
-			if(ev.char.name.replace(/[^\w]/g, '').length + ev.msg.length > 15 || /^\w+$/.test(ev.msg)) {
+			if(ev.char.name.replace(/[^\w]/g, '').length + ev.msg.length > 15 || !(/^\w+$/.test(ev.msg))) {
 				await this._checkAllowance(7000);
 				this.module.actionAddress.enqueue(
 					char.id,
