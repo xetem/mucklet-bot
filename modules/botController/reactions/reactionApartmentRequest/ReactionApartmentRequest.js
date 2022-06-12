@@ -119,35 +119,54 @@ class ReactionApartmentRequest {
 			this.module.actionAddress.enqueue(
 				char.id,
 				ev.char.id,
-				`Thank you, ${ev.char.name}, I'll get right on that as soon as you \`whisper\` me your preferred passphrase, it must be \`${15 - ev.char.name.length}\` characters or less.`,
+				`Thank you, ${ev.char.name}, I'll get right on that as soon as you \`whisper\` me your preferred passphrase, it must be \`${15 - ev.char.name.replace(/[^\w]/g, '').length}\` alphanumeric characters or less.`,
 				false,
 				100
 			);
 			this.allowance -= 7000;
 			this.inAptPass = true;
 		} else if (this.inAptPass){
-			this.inAptPass = false;
+			if(ev.char.name.replace(/[^\w]/g, '').length + ev.msg.length > 15 || /^\w+$/.test(ev.msg)) {
+				await this._checkAllowance(7000);
+				this.module.actionAddress.enqueue(
+					char.id,
+					ev.char.id,
+					`I'm sorry, ${ev.char.name}, your passphrase must be \`${15 - ev.char.name.replace(/[^\w]/g, '').length}\` alphanumeric characters [A-Za-z0-9_-] or less. Please \`whisper\` me your preferred passphrase.`,
+					false,
+					100
+				);
+			} else {
+				this.inAptPass = false;
 
-			// We could just call the API directly with the steps. But by letting
-			// botController perform them as an action, we can be sure the bot only
-			// creates one apartment at a time.
-			this.module.botController.enqueue('createApartment', {
-				charId: char.id,
-				target: ev.char,
-				roomId: this.roomId,
-				unitNr: `${ev.char.name}${ev.msg}`,
-				delay: 1000,
-				postdelay: 2000,
-				priority: 20
-			});
+				// We could just call the API directly with the steps. But by letting
+				// botController perform them as an action, we can be sure the bot only
+				// creates one apartment at a time.
+				this.module.botController.enqueue('createApartment', {
+					charId: char.id,
+					target: ev.char,
+					roomId: this.roomId,
+					unitNr: `${ev.char.name.replace(/[^\w]/g, '')}${ev.msg}`,
+					delay: 1000,
+					postdelay: 2000,
+					priority: 20
+				});
+			}
 		} else if (this.inChangePass){
 			this.inChangePass = false;
+			await this._checkAllowance(7000);
+			await char.call('address', {
+				msg: replaceTags("says, \"I am so sorry, {charName}, I cannot currently change locks, please send a message or mail to Xetem Ilekex to assist you.\"", {
+					charName: target.name
+				}),
+				pose: true,
+				charId: target.id
+			});
 		}else {
 			await this._checkAllowance(7000);
 			this.module.actionAddress.enqueue(
 				char.id,
 				ev.char.id,
-				replaceTags("smiles, \"I can help with setting up an apartment or changing the locks on an existing one.\"\n((To request a new apartment, type `address C1-P1 = I would like to lease an apartment.`\nTo change the lock on your apartment, type `address C1-P1 = I would like to change my locks.`))", ev.char),
+				"smiles, \"I can help with setting up an apartment or changing the locks on an existing one.\"\n((To request a new apartment, type `address C1-P1 = I would like to lease an apartment.`\nTo change the lock on your apartment, type `address C1-P1 = I would like to change my locks.`))",
 				true,
 				100
 			);
@@ -226,12 +245,13 @@ class ReactionApartmentRequest {
 			await char.call('teleportHome');
 			await sleep(1500);
 			await char.call('whisper', {
-				msg: `says ,\"Alright, you’re all set up with your new apartment. Here are your keys, you’re passcode to access your new apartment is \`${unitNr}\` Thank you for choosing Cinnabar Prism Apartments, we hope you enjoy your stay. Feel free to have a look around the facilities.\"\n((You can get there with the commands: \`go out\`, \`go up\`, \`go ${unitNr}\`.))\n((Make sure to accept the room and area requests in the Realm panel to the far left.))\n\n((I will now go in sleep mode, it may take some time for me to respond to more requests. Zzz.))`,
+				msg: `says ,\"Alright, you’re all set up with your new apartment. Here are your keys, you’re passcode to access your new apartment is \`${unitNr}\` Thank you for choosing Cinnabar Prism Apartments, we hope you enjoy your stay. Feel free to have a look around the facilities.\"\n((You can get there with the commands: \`go out\`, \`go up\`, \`go up\`, \`go ${unitNr}\`.))\n((Make sure to accept the room and area requests in the Realm panel to the far left.))\n\n((I will now go in sleep mode, it may take some time for me to respond to more requests. Zzz.))`,
 				pose: true,
 				charId: target.id
 			});
 			await this.db.put(target.id, unitNr);
 		} catch (err) {
+			console.log(err);
 			await char.call('teleportHome');
 			await sleep(5000);
 			await char.call('address', {
