@@ -207,12 +207,13 @@ class ReactionApartmentRequest {
 				travelMsg: `goes inside ${target.name}'s apartment.`,
 				hidden: true
 			});
+			let parent = char.inRoom.area.id;
 			await sleep(1500);
 			await char.call('useExit', { exitKey: unitNr });
 			await sleep(1500);
 			let area = await char.call('createArea', {
 				name: `${unitNr}`,
-				ParentID: char.inRoom.area.id
+				ParentID: parent
 			});
 			await sleep(1500);
 			await char.call('setLocation', {
