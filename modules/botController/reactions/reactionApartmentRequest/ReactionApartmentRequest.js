@@ -104,6 +104,15 @@ class ReactionApartmentRequest {
 				return;
 			}
 
+			await this._checkAllowance(7000);
+			await char.call('address', {
+				msg: replaceTags("says, \"I am so sorry, {charName}, I cannot currently change locks, please send a message or mail to Xetem Ilekex to assist you.\"", {
+					charName: target.name
+				}),
+				pose: true,
+				charId: target.id
+			});
+
 			//TODO: Lock changing here
 
 		} else if (this.inAptBuild){
@@ -153,14 +162,9 @@ class ReactionApartmentRequest {
 			}
 		} else if (this.inChangePass){
 			this.inChangePass = false;
-			await this._checkAllowance(7000);
-			await char.call('address', {
-				msg: replaceTags("says, \"I am so sorry, {charName}, I cannot currently change locks, please send a message or mail to Xetem Ilekex to assist you.\"", {
-					charName: target.name
-				}),
-				pose: true,
-				charId: target.id
-			});
+			
+			// TODO: Lock changing here
+
 		}else {
 			await this._checkAllowance(7000);
 			this.module.actionAddress.enqueue(
