@@ -25,5 +25,5 @@ jobs:
         context: .
         push: true
         tags: 
-          xetem/c1-p1:$(date +%s)
-          xetem/c1-p1:latest
+        - xetem/c1-p1:$(date +%s)
+        - xetem/c1-p1:latest
