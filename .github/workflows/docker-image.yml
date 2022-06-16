@@ -23,5 +23,6 @@ jobs:
       uses: docker/build-push-action@v3
       with:
         context: .
+        file: ./Dockerfile
         push: true
-        tags: ${{ secrets.DOCKERHUB_USERNAME }}/c1-p1:$(date +%s), ${{ secrets.DOCKERHUB_USERNAME }}/c1-p1:latest
+        tags: ${{ secrets.DOCKERHUB_USERNAME }}/c1-p1:latest
