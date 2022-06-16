@@ -6,7 +6,7 @@ This repo is intended to keep progress and revisions saved on the bot, as well a
 
 ## Docker
 
-This bot has been set up for use in a docker container, in addition to a stand-alone node app. The image is not currently distributed and must be built from the repo with `docker build`
+This bot has been set up for use in a docker container, in addition to a stand-alone node app. You can pull the latest image from dockerhub at the tag `xetem/c1-p1:latest`
 
 ### `docker run`
 
