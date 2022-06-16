@@ -195,17 +195,6 @@ class ReactionApartmentRequest {
 			await sleep(1500);
 			await char.call('useExit', { exitKey: 'up' });
 			await sleep(1500);
-			let area = await char.call('createArea', {
-				name: `${unitNr}`,
-				ParentID: char.inRoom.area.id
-			});
-			await sleep(1500);
-			await char.call('setLocation', {
-				locationId: area.id,
-				type: 'area',
-				private: true
-			});
-			await sleep(1500);
 			let createExitResult = await char.call('createExit', {
 				keys:  [ unitNr ],
 				name: `${unitNr}`,
@@ -216,6 +205,17 @@ class ReactionApartmentRequest {
 			});
 			await sleep(1500);
 			await char.call('useExit', { exitKey: unitNr });
+			await sleep(1500);
+			let area = await char.call('createArea', {
+				name: `${unitNr}`,
+				ParentID: char.inRoom.area.id
+			});
+			await sleep(1500);
+			await char.call('setLocation', {
+				locationId: area.id,
+				type: 'area',
+				private: true
+			});
 			await sleep(1500);
 			await char.call('setRoom', {
 				name: `${unitNr}`,
