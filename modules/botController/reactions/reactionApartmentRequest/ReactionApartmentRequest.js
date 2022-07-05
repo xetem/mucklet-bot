@@ -199,6 +199,8 @@ class ReactionApartmentRequest {
 			await sleep(1500);
 			await char.call('useExit', { exitKey: 'up' });
 			await sleep(1500);
+			await char.call('useExit', { exitKey: 'up' });
+			await sleep(1500);
 			let createExitResult = await char.call('createExit', {
 				keys:  [ unitNr ],
 				name: `${unitNr}`,
@@ -250,7 +252,7 @@ class ReactionApartmentRequest {
 			await char.call('teleportHome');
 			await sleep(1500);
 			await char.call('whisper', {
-				msg: `says ,\"Alright, you’re all set up with your new apartment. Here are your keys, you’re passcode to access your new apartment is \`${unitNr}\` Thank you for choosing Cinnabar Prism Apartments, we hope you enjoy your stay. Feel free to have a look around the facilities.\"\n((You can get there with the commands: \`go out\`, \`go up\`, \`go up\`, \`go ${unitNr}\`.))\n((Make sure to accept the room and area requests in the Realm panel to the far left.))\n\n((I will now go in sleep mode, it may take some time for me to respond to more requests. Zzz.))`,
+				msg: `says ,\"Alright, you’re all set up with your new apartment. Here are your keys, you’re passcode to access your new apartment is \`${unitNr}\` Thank you for choosing Cinnabar Prism Apartments, we hope you enjoy your stay. Feel free to have a look around the facilities.\"\n((You can get there with the commands: \`go out\`, \`go up\`, \`go up\`, \`go up\`, \`go ${unitNr}\`.))\n((Make sure to accept the room and area requests in the Realm panel to the far left.))\n\n((I will now go in sleep mode, it may take some time for me to respond to more requests. Zzz.))`,
 				pose: true,
 				charId: target.id
 			});
