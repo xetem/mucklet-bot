@@ -193,13 +193,7 @@ class ReactionApartmentRequest {
 				charId: target.id,
 			});
 			await sleep(1500);
-			await char.call('useExit', { exitKey: 'out' });
-			await sleep(1500);
-			await char.call('useExit', { exitKey: 'up' });
-			await sleep(1500);
-			await char.call('useExit', { exitKey: 'up' });
-			await sleep(1500);
-			await char.call('useExit', { exitKey: 'up' });
+			await char.call('teleport', { roomId: 'calrl0u9gbrqf7063ke0' }); //TODO: Make this a ENV variable.
 			await sleep(1500);
 			let createExitResult = await char.call('createExit', {
 				keys:  [ unitNr ],
