@@ -233,12 +233,12 @@ class ReactionApartmentRequest {
 				travelMsg: "leaves the apartment."
 			});
 			await sleep(4000);
-			await char.call('requestSetRoomOwner', {
+			await char.call('setRoomOwner', { //Use `requestSetRoomOwner` if not a builder.
 				roomId: createExitResult.targetRoom.id,
 				charId: target.id
 			});
 			await sleep(1500);
-			await char.call('requestSetAreaOwner', {
+			await char.call('setAreaOwner', { //Use `requestSetAreaOwner` if not a builder.
 				areaId: area.id,
 				charId: target.id
 			});
