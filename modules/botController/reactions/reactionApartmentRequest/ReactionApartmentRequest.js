@@ -86,10 +86,11 @@ class ReactionApartmentRequest {
 			);
 			this.allowance -= 7000;
 			this.inAptBuild = true;
+			this.currentTarget = ev.target.id;
 		} 
 		// Try to detect talk about changing locks.
 		else if (!this.inAptBuild && !this.inAptPass && !this.inChangePass
-				 && ev.msg.match(/\b(change|rename)( my)? +(locks?|passcode|apartment)\b/)) {
+				 && ev.msg.match(/\b(change|rename)( my)? (locks?|passcode|apartment)\b/)) {
 			//Check if we already have an apartment
 			if (!await this._alreadyHasApartment(ev.char.id)) {
 				await this._checkAllowance(7000);
@@ -115,7 +116,8 @@ class ReactionApartmentRequest {
 
 			//TODO: Lock changing here
 
-		} else if (this.inAptBuild){
+		} else if (this.inAptBuild && this.currentTarget === ev.target.id){
+			this.currentTarget = null;
 			this.inAptBuild = false;
 
 			if(ev.msg.match(/\bno\b/)) {
@@ -134,7 +136,9 @@ class ReactionApartmentRequest {
 			);
 			this.allowance -= 7000;
 			this.inAptPass = true;
-		} else if (this.inAptPass){
+			this.currentTarget = ev.target.id;
+		} else if (this.inAptPass && this.currentTarget === ev.target.id){
+			this.currentTarget = null;
 			if(ev.char.name.replace(/[^\w]/g, '').length + ev.msg.length > 15 || !(/^\w+$/.test(ev.msg))) {
 				await this._checkAllowance(7000);
 				this.module.actionAddress.enqueue(
@@ -160,6 +164,7 @@ class ReactionApartmentRequest {
 					priority: 20
 				});
 			}
+			this.currentTarget = ev.target.id;
 		} else if (this.inChangePass){
 			this.inChangePass = false;
 			
