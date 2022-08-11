@@ -144,7 +144,7 @@ class ReactionApartmentRequest {
 				this.module.actionAddress.enqueue(
 					char.id,
 					ev.char.id,
-					`I'm sorry, ${ev.char.name}, your passphrase must be \`${15 - ev.char.name.replace(/[^\w]/g, '').length}\` alphanumeric characters [A-Za-z0-9_-] or less. Please \`whisper\` me your preferred passphrase.`,
+					`I'm sorry, ${ev.char.name}, your passphrase must be \`${15 - ev.char.name.replace(/[^\w]/g, '').length}\` alphanumeric characters \`A-Za-z0-9_-\` or less. Please \`whisper\` me your preferred passphrase.`,
 					false,
 					100
 				);
@@ -251,11 +251,16 @@ class ReactionApartmentRequest {
 			await char.call('teleportHome');
 			await sleep(1500);
 			await char.call('whisper', {
-				msg: `says ,\"Alright, you’re all set up with your new apartment. Here are your keys, you’re passcode to access your new apartment is \`${unitNr}\` Thank you for choosing Cinnabar Prism Apartments, we hope you enjoy your stay. Feel free to have a look around the facilities.\"\n((You can get there with the commands: \`go out\`, \`go up\`, \`go up\`, \`go up\`, \`go up\`, \`go ${unitNr}\`.))\n((Make sure to accept the room and area requests in the Realm panel to the far left.))\n\n((I will now go in sleep mode, it may take some time for me to respond to more requests. Zzz.))`,
+				msg: `says ,\"Alright, you’re all set up with your new apartment. Here are your keys, you’re passcode to access your new apartment is \`${unitNr}\` Thank you for choosing Cinnabar Prism Apartments, we hope you enjoy your stay. Feel free to have a look around the facilities.\"\n((You can get there with the commands: \`go out\`, \`go up\`, \`go up\`, \`go up\`, \`go up\`, \`go ${unitNr}\`.))`,
 				pose: true,
 				charId: target.id
 			});
 			await this.db.put(target.id, unitNr);
+			await sleep(1500);
+			await char.call('say', {
+				msg: `I will now go in sleep mode, it may take some time for me to respond to more requests. Zzz.`,
+				pose: false,
+			});
 		} catch (err) {
 			console.log(err);
 			await char.call('teleportHome');
