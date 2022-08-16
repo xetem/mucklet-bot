@@ -200,14 +200,16 @@ class ReactionApartmentRequest {
 			await sleep(1500);
 			await char.call('teleport', { roomId: 'cb1qvau9gbrmb43ltp50' }); //TODO: Make this a ENV variable.
 			await sleep(1500);
-			let createExitResult = await char.call('createExit', {
-				keys:  [ unitNr ],
-				name: `${unitNr}`,
-				leaveMsg: `goes inside ${target.name}'s apartment.`,
-				arriveMsg: "enters the apartment from the hallway.",
-				travelMsg: `goes inside ${target.name}'s apartment.`,
-				hidden: true
-			});
+			if(roomId === "new") {
+				let createExitResult = await char.call('createExit', {
+					keys:  [ unitNr ],
+					name: `${unitNr}`,
+					leaveMsg: `goes inside ${target.name}'s apartment.`,
+					arriveMsg: "enters the apartment from the hallway.",
+					travelMsg: `goes inside ${target.name}'s apartment.`,
+					hidden: true
+				});
+			}
 			let parent = char.inRoom.area.id;
 			await sleep(1500);
 			await char.call('useExit', { exitKey: unitNr });
