@@ -28,6 +28,13 @@ class ReactionApartmentRequest {
 			if (err) throw err;
 		});
 
+		setParams(this, params, {
+			desc: {type: String, default: "An empty apartment. You can change the description here with the pencil in the upper left corner of this sidebar. You can create new rooms off of this room by clicking the pencil next to the `Exit` label below."},
+			dest: {type: String, default: "Nowhere"},
+			isBuilder: {type: Boolean, default: false},
+			path: {type: String, default: "go out" },
+		});
+
 		this.app.require([ 'botController', 'charEvents', 'actionAddress' ], this._init);
 	}
 
@@ -198,7 +205,7 @@ class ReactionApartmentRequest {
 				charId: target.id,
 			});
 			await sleep(1500);
-			await char.call('teleport', { roomId: 'cb1qvau9gbrmb43ltp50' }); //TODO: Make this a ENV variable.
+			await char.call('teleport', { roomId: this.dest }); 
 			await sleep(1500);
 			let createExitResult = await char.call('createExit', {
 				keys:  [ unitNr ],
@@ -225,7 +232,7 @@ class ReactionApartmentRequest {
 			await sleep(1500);
 			await char.call('setRoom', {
 				name: `${unitNr}`,
-				desc: "An empty apartment. You can change the description here with the pencil in the upper left corner of this sidebar. You can create new rooms off of this room by clicking the pencil next to the `Exit` label below.",
+				desc: this.desc,
 				areaId: area.id
 			});
 			await sleep(1500);
@@ -238,12 +245,12 @@ class ReactionApartmentRequest {
 				travelMsg: "leaves the apartment."
 			});
 			await sleep(4000);
-			await char.call('setRoomOwner', { //Use `requestSetRoomOwner` if not a builder.
+			await char.call(this.isBuilder ? 'setRoomOwner' : 'requestSetRoomOwner', {
 				roomId: createExitResult.targetRoom.id,
 				charId: target.id
 			});
 			await sleep(1500);
-			await char.call('setAreaOwner', { //Use `requestSetAreaOwner` if not a builder.
+			await char.call(this.isBuilder ? 'setAreaOwner' : 'requestSetAreaOwner', {
 				areaId: area.id,
 				charId: target.id
 			});
@@ -251,7 +258,7 @@ class ReactionApartmentRequest {
 			await char.call('teleportHome');
 			await sleep(1500);
 			await char.call('whisper', {
-				msg: `says ,\"Alright, you’re all set up with your new apartment. Here are your keys, you’re passcode to access your new apartment is \`${unitNr}\` Thank you for choosing Cinnabar Prism Apartments, we hope you enjoy your stay. Feel free to have a look around the facilities.\"\n((You can get there with the commands: \`go out\`, \`go up\`, \`go up\`, \`go up\`, \`go up\`, \`go ${unitNr}\`.))`,
+				msg: `says ,\"Alright, you’re all set up with your new apartment. Here are your keys, you’re passcode to access your new apartment is \`${unitNr}\` Thank you for choosing Cinnabar Prism Apartments, we hope you enjoy your stay. Feel free to have a look around the facilities.\"\n((You can get there with the commands: ${this.path}, \`go ${unitNr}\`.))`,
 				pose: true,
 				charId: target.id
 			});

@@ -2,7 +2,7 @@
 
 The C1-P1 bot (colloquially known as 'Chippy') is designed to assist the Cinnabar Prism apartment complex on the Wolfery.com Mucklet server in serving character in onboarding a personal space in the complex.
 
-This repo is intended to keep progress and revisions saved on the bot, as well as document changes made to the original bot framework so that other bot implementors can share code. This code is not intended to be run as-is, except by the owner @xetem.
+This repo is intended to keep progress and revisions saved on the bot, as well as document changes made to the original bot framework so that other bot implementors can share code. ~~This code is not intended to be run as-is, except by the owner @xetem.~~ This bot is being built to be as drop-in compatible with areas of similar usages to C1-P1 in the Cinnabar Prism Apartments in Wolfery as possible.
 
 ## Docker
 
@@ -31,6 +31,10 @@ Multiple environment variables are set up in the docker image to pass through to
 | `REACTION_WHISPER_REPLY_PRIORITY` | `100` | default | The action priority of the bot queueing a reply to a whisper. |
 | `REACTION_WHISPER_REPLY_DELAY` | `1000` | default | The delay between sending replies to whispers. |
 | `REACTION_WHISPER_REPLY_PHRASES` | `` `[":does not understand whispers. ((To get help, address me and say \"Help\".))",]` `` | default | An array of possible replies to whispers. |
+| `REACTION_APARTMENT_REQUEST_DEST` \*Required | In-realm destination | In-realm destination | The in-realm destination to teleport to and build from, this can currently only be in the form of a room ID, without the leading `#`. |
+| `REACTION_APARTMENT_REQUEST_DESC` | ``"An empty apartment. You can change the description here with the pencil in the upper left corner of this sidebar. You can create new rooms off of this room by clicking the pencil next to the `Exit` label below."`` | default | The default text to describe new rooms. |
+| `REACTION_APARTMENT_REQUEST_ISBUILDER` | `false` | default | Set to `true` if bot is part of a builder account, changing the transfer of ownership for new rooms and areas from a request to an instant change. |
+| `REACTION_APARTMENT_REQUEST_PATH` | `` `go out` `` | default | The path of commands to get from the bot's home (where it takes requests) to the point where the user can `go {passphase}`. |
 
 # Mucklet Bot
 
