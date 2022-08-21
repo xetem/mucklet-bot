@@ -34,7 +34,7 @@ Multiple environment variables are set up in the docker image to pass through to
 | `REACTION_APARTMENT_REQUEST_DEST` \*Required | In-realm destination | In-realm destination | The in-realm destination to teleport to and build from, this can currently only be in the form of a room ID, without the leading `#`. |
 | `REACTION_APARTMENT_REQUEST_DESC` | ``"An empty apartment. You can change the description here with the pencil in the upper left corner of this sidebar. You can create new rooms off of this room by clicking the pencil next to the `Exit` label below."`` | default | The default text to describe new rooms. |
 | `REACTION_APARTMENT_REQUEST_ISBUILDER` | `false` | default | Set to `true` if bot is part of a builder account, changing the transfer of ownership for new rooms and areas from a request to an instant change. |
-| `REACTION_APARTMENT_REQUEST_PATH` | `` `go out` `` | default | The path of commands to get from the bot's home (where it takes requests) to the point where the user can `go {passphase}`. |
+| `REACTION_APARTMENT_REQUEST_PATH` | `` \`go out\` `` | default | The path of commands to get from the bot's home (where it takes requests) to the point where the user can `go {passphase}`. |
 
 # Mucklet Bot
 

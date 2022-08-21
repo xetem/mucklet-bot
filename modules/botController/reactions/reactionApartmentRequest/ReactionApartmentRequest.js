@@ -30,10 +30,10 @@ class ReactionApartmentRequest {
 		});
 
 		setParams(this, params, {
-			desc: {type: String, default: "An empty apartment. You can change the description here with the pencil in the upper left corner of this sidebar. You can create new rooms off of this room by clicking the pencil next to the `Exit` label below."},
-			dest: {type: String, default: "Nowhere"},
-			isBuilder: {type: Boolean, default: false},
-			path: {type: String, default: "go out" },
+			desc: {type: 'string', default: "An empty apartment. You can change the description here with the pencil in the upper left corner of this sidebar. You can create new rooms off of this room by clicking the pencil next to the `Exit` label below."},
+			dest: {type: 'string', default: "Nowhere"},
+			isBuilder: {type: 'bool', default: false},
+			path: {type: 'string', default: "\`go out\`" },
 		});
 
 		this.app.require([ 'botController', 'charEvents', 'actionAddress' ], this._init);

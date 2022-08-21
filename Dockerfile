@@ -17,7 +17,7 @@ ENV REACTION_ARRIVE_WELCOME_PHRASES `["turns to {name}, \"Welcome.\". ((To get h
 ENV REACTION_APARTMENT_REQUEST_DEST changeme
 ENV REACTION_APARTMENT_REQUEST_DESC "An empty apartment. You can change the description here with the pencil in the upper left corner of this sidebar. You can create new rooms off of this room by clicking the pencil next to the `Exit` label below."
 ENV REACTION_APARTMENT_REQUEST_ISBUILDER false
-ENV REACTION_APARTMENT_REQUEST_PATH `go out`
+ENV REACTION_APARTMENT_REQUEST_PATH "\`go out\`"
 
 # Create app directory
 WORKDIR /app
