@@ -174,12 +174,12 @@ class ReactionApartmentRequest {
 		let { unitNr, target } = outcome;
 
 		try{
-			await char.call('address', {
+			await ctrl.call('address', {
 				msg: "Perfect, let me get that ready for you. Please remain here while I do so. ((Leaving the room before I return will result in an error state.))",
 				charId: target.id,
 			});
-			await char.call('teleport', { roomId: this.dest }); 
-			let createExitResult = await char.call('createExit', {
+			await ctrl.call('teleport', { roomId: this.dest }); 
+			let createExitResult = await ctrl.call('createExit', {
 				keys:  [ unitNr ],
 				name: `${unitNr}`,
 				leaveMsg: `goes inside ${target.name}'s apartment.`,
@@ -187,23 +187,23 @@ class ReactionApartmentRequest {
 				travelMsg: `goes inside ${target.name}'s apartment.`,
 				hidden: true
 			});
-			let parent = char.inRoom.area.id;
-			await char.call('useExit', { exitKey: unitNr });
-			let area = await char.call('createArea', {
+			let parent = ctrl.inRoom.area.id;
+			await ctrl.call('useExit', { exitKey: unitNr });
+			let area = await ctrl.call('createArea', {
 				name: `${unitNr}`,
 				ParentID: parent
 			});
-			await char.call('setLocation', {
+			await ctrl.call('setLocation', {
 				locationId: area.id,
 				type: 'area',
 				private: true
 			});
-			await char.call('setRoom', {
+			await ctrl.call('setRoom', {
 				name: `${unitNr}`,
 				desc: this.desc,
 				areaId: area.id
 			});
-			await char.call('setExit', {
+			await ctrl.call('setExit', {
 				exitKey: 'back',
 				name: 'To Hallway',
 				keys: [ 'exit', 'out', 'hall', 'hallway' ],
@@ -211,16 +211,16 @@ class ReactionApartmentRequest {
 				arriveMsg: `arrives from ${target.name}'s apartment.`,
 				travelMsg: "leaves the apartment."
 			});
-			await char.call(this.isBuilder ? 'setRoomOwner' : 'requestSetRoomOwner', {
+			await ctrl.call(this.isBuilder ? 'setRoomOwner' : 'requestSetRoomOwner', {
 				roomId: createExitResult.targetRoom.id,
 				charId: target.id
 			});
-			await char.call(this.isBuilder ? 'setAreaOwner' : 'requestSetAreaOwner', {
+			await ctrl.call(this.isBuilder ? 'setAreaOwner' : 'requestSetAreaOwner', {
 				areaId: area.id,
 				charId: target.id
 			});
-			await char.call('teleportHome');
-			await char.call('whisper', {
+			await ctrl.call('teleportHome');
+			await ctrl.call('whisper', {
 				msg: `says ,\"Alright, you’re all set up with your new apartment. Here are your keys, you’re passcode to access your new apartment is \`${unitNr}\` Thank you for choosing Cinnabar Prism Apartments, we hope you enjoy your stay. Feel free to have a look around the facilities.\"\n((You can get there with the commands: ${this.path}, \`go ${unitNr}\`.))`,
 				pose: true,
 				charId: target.id
@@ -228,20 +228,17 @@ class ReactionApartmentRequest {
 			await this.db.put(target.id, unitNr);
 		} catch (err) {
 			console.log(err);
-			await char.call('teleportHome');
-			await char.call('address', {
-				msg: replaceTags("says, \"I am so sorry, {charName} There seems to have been an issue, please send Xetem Ilekex a message letting him know you had an issue. ((use `mail Xetem Ilekex = I had a problem leasing an apartment. The error was: '{err}'` or similar if he's not online))\"", {
-					charName: target.name,
-					err: err._message
-				}),
-				pose: true,
+			await ctrl.call('teleportHome');
+			await ctrl.call('address', {
+				msg: `says, \"I am so sorry, ${target.name} There seems to have been an issue, please send Xetem Ilekex a message letting him know you had an issue. ((use \`mail Xetem Ilekex = I had a problem leasing an apartment. The error was: '${err._message}'\` or similar if he's not online))`,
+				pose: false,
 				charId: target.id
 			});
 		} finally {
 		}
 	}
 
-	_rename = async (player, state, outcome) => {
+	_rename = async (bot, state, outcome) => {
 		//TODO Rename logic here.
 	}
 
