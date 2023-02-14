@@ -4,20 +4,12 @@ const config = {
 		webResourcePath: "https://api.test.mucklet.com/api/",
 		origin: "https://test.mucklet.com",
 	},
-	login: {
-		user: 'botmaster',
-		pass: 'ZSx9xofZjJiJME7S5AjHS2EehqQMqlHEtD8d1ZE8XNA=', // sha256("mysecret")
-		hash: 'eEhjOWz2QXqUdqcd6RBqt1MJXJ6v9yFGO8lL9jV6/dM=', // hmacsha256("mysecret", "TheStoryStartsHere")
+	bot: {
+		token: '', // Bot token created under Character Settings
 	},
 	personality: {
 		typeSpeed: 300,  // 300 characters per minute
 		readSpeed: 1500, // 1500 characters per minute
-	},
-	actionCreateChar: {
-		charLimit: 1,        // Create only one character
-		probability: 100,    // High probability
-		delay: 20 * 1000,    // 20 seconds to create a character
-		postdelay: 5 * 1000, // 5 seconds wait after creating a character
 	},
 	actionGo: {
 		populationProbability: {
@@ -96,8 +88,6 @@ const config = {
 			80: 0.0125, // 5% chance with 80 characters
 		},
 		priority: 150,
-		delay: 5 * 1000,     // 5 seconds additional delay before welcoming
-		postdelay: 2 * 1000, // 2 seconds delay after welcoming
 		phrases: [
 			"waves to {name}.",
 			"says, \"Hi, {name}!\"",

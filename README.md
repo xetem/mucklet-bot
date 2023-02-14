@@ -17,9 +17,7 @@ Multiple environment variables are set up in the docker image to pass through to
 | `API_HOST_URL` | `wss://test.mucklet.com` | `wss://api.wolfery.com` | The host url for the api. |
 | `API_WEB_RESOURCE_PATH` | `https://test.mucklet.com/api/` | `https://api.wolfery.com/api/` | The resource url for the api. |
 | `API_ORIGIN` | `https://mucklet.com` | `https://wolfery.com` | The host url of the site. |
-| `LOGIN_USER` \*Required | Mucklet.com username | Wolfery.com username | The username of the controlling account. |
-| `LOGIN_PASS` \*Required | hashed Mucklet.com password | hashed Wolfery.com password | The password of the controlling account, sha256 hashed and base64 encoded. |
-| `BOT_CONTROLLER_INCLUDE_CHARS` | `` `[ 'c62rjs0t874cqited7b0' ]` `` | default | An array character id's to select from when choosing a character to wake up and control. |
+| `BOT_TOKEN` \*Required | Mucklet.com bot token | Wolfery.com bot token | The bot token of the bot accuired from the respective realm. |
 | `PERSONALITY_TYPE_SPEED` | `8000` | default | The number of characters per millisecond the bot types messages at. |
 | `PERSONALITY_READ_SPEED` | `50000` | default | The number of characters per millisecond the bot reads messages at. |
 | `ACTION_WAKEUP_PROBABILITY` | `50` | default | The probablility of the bot waking up a character. |
@@ -49,15 +47,14 @@ modular bot for accessing a mucklet API.
 
 ## Quick start
 
-Run the following commands. Replace `<USERNAME>` with a name of your choice.
-The bot will automatically register the user, using the password `mysecret`, as
-defined in `config.mucklet.js`:
+Run the following commands. Replace `<BOT_TOKEN>` with a bot token generated
+under _Character Settings_ in the client:
 
  ```text
 git clone https://github.com/anisus/mucklet-bot.git
 cd mucklet-bot
 npm install
-node index.js --login.user=<USERNAME> cfg/config.mucklet.js
+node index.js --login.token=<BOT_TOKEN> cfg/config.mucklet.js
 ```
 
 Login at [Mucklet.com](https://mucklet.com) to see the bot in action.
