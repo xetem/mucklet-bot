@@ -87,23 +87,27 @@ class ReactionApartmentRequest {
 		else if (!this.inAptBuild && !this.inAptPass && !this.inChangePass
 				 && ev.msg.match(/\b(change|rename)( my)? (locks?|passcode|apartment)\b/)) {
 			//Check if we already have an apartment
+			console.log(1);
 			if (!await this._alreadyHasApartment(ev.char.id)) {
+				console.log(2);
 				this.module.actionAddress.enqueue(
 					ev.char.id,
 					replaceTags("I'm sorry {name}, don't yet have an apartment for me to change the locks on.", ev.char),
 					false,
 					100
 				);
+				console.log(3);
 				return;
 			}
 
+			console.log(4);
 			this.module.actionAddress.enqueue(
 				ev.char.id,
-				`I am so sorry, ${charName}, I cannot currently change locks, please send a message or mail to Xetem Ilekex to assist you.`,
+				`I am so sorry, ${ev.char.name}, I cannot currently change locks, please send a message or mail to Xetem Ilekex to assist you.`,
 				false,
 				100
 			);
-
+			console.log(5);
 			//TODO: Lock changing here
 
 		} else if (this.inAptBuild && this.currentTarget === ev.target.id){
