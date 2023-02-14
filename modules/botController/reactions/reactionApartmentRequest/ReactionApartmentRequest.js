@@ -165,11 +165,11 @@ class ReactionApartmentRequest {
 		}
 	}
 
-	_exec = async (player, state, outcome) => {
-		let char = findById(player.controlled, outcome.charId);
+	_exec = async (bot, state, outcome) => {
+		let ctlr = bot.controlled;
 		// Assert we haven't lost control of bot
-		if (!char) {
-			return Promise.reject(`${outcome.charId} not controlled`);
+		if (!ctrl) {
+			return Promise.reject(`char not controlled`);
 		}
 		let { unitNr, target } = outcome;
 
