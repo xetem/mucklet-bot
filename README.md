@@ -17,7 +17,7 @@ Multiple environment variables are set up in the docker image to pass through to
 | `API_HOST_URL` | `wss://test.mucklet.com` | `wss://api.wolfery.com` | The host url for the api. |
 | `API_WEB_RESOURCE_PATH` | `https://test.mucklet.com/api/` | `https://api.wolfery.com/api/` | The resource url for the api. |
 | `API_ORIGIN` | `https://mucklet.com` | `https://wolfery.com` | The host url of the site. |
-| `LOGIN_TOKEN` \*Required | Mucklet.com bot token | Wolfery.com bot token | The bot token of the bot accuired from the respective realm. |
+| `BOT_TOKEN` \*Required | Mucklet.com bot token | Wolfery.com bot token | The bot token of the bot accuired from the respective realm. |
 | `PERSONALITY_TYPE_SPEED` | `8000` | default | The number of characters per millisecond the bot types messages at. |
 | `PERSONALITY_READ_SPEED` | `50000` | default | The number of characters per millisecond the bot reads messages at. |
 | `ACTION_WAKEUP_PROBABILITY` | `50` | default | The probablility of the bot waking up a character. |

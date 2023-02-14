@@ -79,7 +79,6 @@ class CharPing {
 		char.call('ping').then(() => {
 			if (!this.timer) return;
 			// On successful ping
-			char.call('look', { charid: char.id });
 			let t = setTimeout(() => {
 				if (this.timer === t) {
 					this._ping(char);
