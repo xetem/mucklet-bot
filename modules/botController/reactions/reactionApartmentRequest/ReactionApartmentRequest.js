@@ -3,11 +3,6 @@ import replaceTags from '#utils/replaceTags.js';
 import findById from '#utils/findById.js';
 import level from 'level';
 
-// Sleep helper function
-function sleep(ms) {
-	return new Promise(resolve => setTimeout(resolve, ms));
-}
-
 /**
  * ReactionApartmentRequest reacts to an apartment request.
  */
@@ -23,8 +18,6 @@ class ReactionApartmentRequest {
 		this.inAptBuild = false;
 		this.inAptPass = false;
 		this.inChangePass = false;
-		this.allowance = 100000; // 100 second time allotment 
-		this.time = Date.now();
 		this.db = level('cinnabarapts', async function (err, db) {
 			if (err) throw err;
 		});
@@ -72,7 +65,6 @@ class ReactionApartmentRequest {
 		) {
 			// Check if we already have an apartment
 			if (await this._alreadyHasApartment(ev.char.id)) {
-				await this._checkAllowance(7000);
 				this.module.actionAddress.enqueue(
 					char.id,
 					ev.char.id,
@@ -80,11 +72,9 @@ class ReactionApartmentRequest {
 					false,
 					100
 				);
-				this.allowance -= 7000;
 				return;
 			}
 
-			await this._checkAllowance(7000);
 			this.module.actionAddress.enqueue(
 				char.id,
 				ev.char.id,
@@ -92,7 +82,6 @@ class ReactionApartmentRequest {
 				false,
 				100
 			);
-			this.allowance -= 7000;
 			this.inAptBuild = true;
 			this.currentTarget = ev.target.id;
 		} 
@@ -101,7 +90,6 @@ class ReactionApartmentRequest {
 				 && ev.msg.match(/\b(change|rename)( my)? (locks?|passcode|apartment)\b/)) {
 			//Check if we already have an apartment
 			if (!await this._alreadyHasApartment(ev.char.id)) {
-				await this._checkAllowance(7000);
 				this.module.actionAddress.enqueue(
 					char.id,
 					ev.char.id,
@@ -109,11 +97,9 @@ class ReactionApartmentRequest {
 					false,
 					100
 				);
-				this.allowance -= 7000;
 				return;
 			}
 
-			await this._checkAllowance(7000);
 			await char.call('address', {
 				msg: replaceTags("says, \"I am so sorry, {charName}, I cannot currently change locks, please send a message or mail to Xetem Ilekex to assist you.\"", {
 					charName: target.name
@@ -134,7 +120,6 @@ class ReactionApartmentRequest {
 				this.roomId = ev.msg;
 			}
 
-			await this._checkAllowance(7000);
 			this.module.actionAddress.enqueue(
 				char.id,
 				ev.char.id,
@@ -142,13 +127,11 @@ class ReactionApartmentRequest {
 				false,
 				100
 			);
-			this.allowance -= 7000;
 			this.inAptPass = true;
 			this.currentTarget = ev.target.id;
 		} else if (this.inAptPass && this.currentTarget === ev.target.id){
 			this.currentTarget = null;
 			if(ev.char.name.replace(/[^\w]/g, '').length + ev.msg.length > 15 || !(/^\w+$/.test(ev.msg))) {
-				await this._checkAllowance(7000);
 				this.module.actionAddress.enqueue(
 					char.id,
 					ev.char.id,
@@ -179,7 +162,6 @@ class ReactionApartmentRequest {
 			// TODO: Lock changing here
 
 		}else {
-			await this._checkAllowance(7000);
 			this.module.actionAddress.enqueue(
 				char.id,
 				ev.char.id,
@@ -187,7 +169,6 @@ class ReactionApartmentRequest {
 				true,
 				100
 			);
-			this.allowance -= 7000; // Addresses cost 7 seconds
 		}
 	}
 
@@ -200,14 +181,11 @@ class ReactionApartmentRequest {
 		let { unitNr, target } = outcome;
 
 		try{
-			await this._checkAllowance(100000);
 			await char.call('address', {
 				msg: "Perfect, let me get that ready for you. Please remain here while I do so. ((Leaving the room before I return will result in an error state.))",
 				charId: target.id,
 			});
-			await sleep(1500);
 			await char.call('teleport', { roomId: this.dest }); 
-			await sleep(1500);
 			let createExitResult = await char.call('createExit', {
 				keys:  [ unitNr ],
 				name: `${unitNr}`,
@@ -217,26 +195,21 @@ class ReactionApartmentRequest {
 				hidden: true
 			});
 			let parent = char.inRoom.area.id;
-			await sleep(1500);
 			await char.call('useExit', { exitKey: unitNr });
-			await sleep(1500);
 			let area = await char.call('createArea', {
 				name: `${unitNr}`,
 				ParentID: parent
 			});
-			await sleep(1500);
 			await char.call('setLocation', {
 				locationId: area.id,
 				type: 'area',
 				private: true
 			});
-			await sleep(1500);
 			await char.call('setRoom', {
 				name: `${unitNr}`,
 				desc: this.desc,
 				areaId: area.id
 			});
-			await sleep(1500);
 			await char.call('setExit', {
 				exitKey: 'back',
 				name: 'To Hallway',
@@ -245,26 +218,21 @@ class ReactionApartmentRequest {
 				arriveMsg: `arrives from ${target.name}'s apartment.`,
 				travelMsg: "leaves the apartment."
 			});
-			await sleep(4000);
 			await char.call(this.isBuilder ? 'setRoomOwner' : 'requestSetRoomOwner', {
 				roomId: createExitResult.targetRoom.id,
 				charId: target.id
 			});
-			await sleep(1500);
 			await char.call(this.isBuilder ? 'setAreaOwner' : 'requestSetAreaOwner', {
 				areaId: area.id,
 				charId: target.id
 			});
-			await sleep(1500);
 			await char.call('teleportHome');
-			await sleep(1500);
 			await char.call('whisper', {
 				msg: `says ,\"Alright, you’re all set up with your new apartment. Here are your keys, you’re passcode to access your new apartment is \`${unitNr}\` Thank you for choosing Cinnabar Prism Apartments, we hope you enjoy your stay. Feel free to have a look around the facilities.\"\n((You can get there with the commands: ${this.path}, \`go ${unitNr}\`.))`,
 				pose: true,
 				charId: target.id
 			});
 			await this.db.put(target.id, unitNr);
-			await sleep(1500);
 			await char.call('say', {
 				msg: `I will now go in sleep mode, it may take some time for me to respond to more requests. Zzz.`,
 				pose: false,
@@ -272,7 +240,6 @@ class ReactionApartmentRequest {
 		} catch (err) {
 			console.log(err);
 			await char.call('teleportHome');
-			await sleep(5000);
 			await char.call('address', {
 				msg: replaceTags("says, \"I am so sorry, {charName} There seems to have been an issue, please send Xetem Ilekex a message letting him know you had an issue. ((use `mail Xetem Ilekex = I had a problem leasing an apartment. The error was: '{err}'` or similar if he's not online))\"", {
 					charName: target.name,
@@ -282,7 +249,6 @@ class ReactionApartmentRequest {
 				charId: target.id
 			});
 		} finally {
-			this.allowance = 0; // This is the know result of the above, either path.
 		}
 	}
 
@@ -298,21 +264,6 @@ class ReactionApartmentRequest {
 		} catch (err) {
 			console.log(`No apartment found for character ${charId}: ${err}`);
 			return false;
-		}
-	}
-
-	_updateAllowance() {
-		let old = this.time;
-		this.time = Date.now();
-		let difference = Math.floor((this.time - old) / 1000) * 1000; // round to the most recent second
-		this.allowance = Math.min(this.allowance + difference, 100000); // allowance cannot exceed 100 seconds
-	}
-
-	async _checkAllowance(cost) {
-		this._updateAllowance();
-		if(this.allowance < cost) {
-			await sleep(Math.min(this.allowance - cost, 100000)); // will never have to sleep more than 100 seconds to recover
-			this._updateAllowance(); 
 		}
 	}
 
