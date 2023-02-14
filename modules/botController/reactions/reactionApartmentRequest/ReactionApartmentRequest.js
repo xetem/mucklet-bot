@@ -166,7 +166,7 @@ class ReactionApartmentRequest {
 	}
 
 	_exec = async (bot, state, outcome) => {
-		let ctlr = bot.controlled;
+		let ctrl = bot.controlled;
 		// Assert we haven't lost control of bot
 		if (!ctrl) {
 			return Promise.reject(`char not controlled`);
