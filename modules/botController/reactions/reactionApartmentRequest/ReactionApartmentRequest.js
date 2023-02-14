@@ -66,7 +66,6 @@ class ReactionApartmentRequest {
 			// Check if we already have an apartment
 			if (await this._alreadyHasApartment(ev.char.id)) {
 				this.module.actionAddress.enqueue(
-					char.id,
 					ev.char.id,
 					replaceTags("I'm sorry {name}, you already have an apartment with us. If you need more space try building off of your existing room.", ev.char),
 					false,
@@ -76,7 +75,6 @@ class ReactionApartmentRequest {
 			}
 
 			this.module.actionAddress.enqueue(
-				char.id,
 				ev.char.id,
 				"Do you have an existing room that you would like to attach as your apartment? ((Reply by `address` ing me the room id to attach or simply replying `no` to continue with a new room.))",
 				false,
@@ -91,7 +89,6 @@ class ReactionApartmentRequest {
 			//Check if we already have an apartment
 			if (!await this._alreadyHasApartment(ev.char.id)) {
 				this.module.actionAddress.enqueue(
-					char.id,
 					ev.char.id,
 					replaceTags("I'm sorry {name}, don't yet have an apartment for me to change the locks on.", ev.char),
 					false,
@@ -100,13 +97,12 @@ class ReactionApartmentRequest {
 				return;
 			}
 
-			await char.call('address', {
-				msg: replaceTags("says, \"I am so sorry, {charName}, I cannot currently change locks, please send a message or mail to Xetem Ilekex to assist you.\"", {
-					charName: target.name
-				}),
-				pose: true,
-				charId: target.id
-			});
+			this.module.actionAddress.enqueue(
+				ev.char.id,
+				`I am so sorry, ${charName}, I cannot currently change locks, please send a message or mail to Xetem Ilekex to assist you.`,
+				false,
+				100
+			);
 
 			//TODO: Lock changing here
 
@@ -121,7 +117,6 @@ class ReactionApartmentRequest {
 			}
 
 			this.module.actionAddress.enqueue(
-				char.id,
 				ev.char.id,
 				`Thank you, ${ev.char.name}, I'll get right on that as soon as you \`whisper\` me your preferred passphrase, it must be \`${15 - ev.char.name.replace(/[^\w]/g, '').length}\` alphanumeric characters or less.`,
 				false,
@@ -133,7 +128,6 @@ class ReactionApartmentRequest {
 			this.currentTarget = null;
 			if(ev.char.name.replace(/[^\w]/g, '').length + ev.msg.length > 15 || !(/^\w+$/.test(ev.msg))) {
 				this.module.actionAddress.enqueue(
-					char.id,
 					ev.char.id,
 					`I'm sorry, ${ev.char.name}, your passphrase must be \`${15 - ev.char.name.replace(/[^\w]/g, '').length}\` alphanumeric characters \`A-Za-z0-9_-\` or less. Please \`whisper\` me your preferred passphrase.`,
 					false,
@@ -163,7 +157,6 @@ class ReactionApartmentRequest {
 
 		}else {
 			this.module.actionAddress.enqueue(
-				char.id,
 				ev.char.id,
 				"smiles, \"I can help with setting up an apartment or changing the locks on an existing one.\"\n((To request a new apartment, type `address C1-P1 = I would like to lease an apartment.`\nTo change the lock on your apartment, type `address C1-P1 = I would like to change my locks.`))",
 				true,
@@ -233,10 +226,6 @@ class ReactionApartmentRequest {
 				charId: target.id
 			});
 			await this.db.put(target.id, unitNr);
-			await char.call('say', {
-				msg: `I will now go in sleep mode, it may take some time for me to respond to more requests. Zzz.`,
-				pose: false,
-			});
 		} catch (err) {
 			console.log(err);
 			await char.call('teleportHome');
