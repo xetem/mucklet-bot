@@ -27,7 +27,7 @@ class ReactionArriveWelcome {
 		this.app = app;
 		// Params
 		setParams(this, params, {
-			populationChance: { type: '?object' },
+			populationChance: { type: '?object', default: { 1: 1} },
 			priority: { type: 'number', default: 150 },
 			wordLengthMin: { type: 'number', default: 1 },
 			wordLengthMax: { type: 'number', default: 12 },
