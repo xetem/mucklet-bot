@@ -3,7 +3,7 @@ FROM node:16
 ENV API_HOST_URL wss://api.test.mucklet.com
 ENV API_WEB_RESOURCE_PATH https://api.test.mucklet.com/api/
 ENV API_ORIGIN https://test.mucklet.com
-ENV LOGIN_TOKEN changeme
+ENV BOT_TOKEN changeme
 ENV PERSONALITY_TYPE_SPEED 8000
 ENV PERSONALITY_READ_SPEED 50000
 ENV ACTION_WAKEUP_PROBABILITY 50
@@ -26,4 +26,4 @@ RUN npm install
 # RUN npm ci --only=production
 
 # EXPOSE 8080 # I don't think I need this
-CMD node index.js --api.hostUrl=${API_HOST_URL} --api.webResourcePath=${API_WEB_RESOURCE_PATH} --api.origin=${API_ORIGIN} --login.token=${LOGIN_TOKEN} --personality.typeSpeed=${PERSONALITY_TYPE_SPEED} --personality.readSpeed=${PERSONALITY_READ_SPEED} --actionWakeup.probability=${ACTION_WAKEUP_PROBABILITY} --reactionArriveWelcome.populationChance="${REACTION_ARRIVE_WELCOME_POPULATION_CHANCE}" --reactionArriveWelcome.priority=${REACTION_ARRIVE_WELCOME_PRIORITY} --reactionArriveWelcome.delay=${REACTION_ARRIVE_WELCOME_DELAY} --reactionArriveWelcome.phrases="${REACTION_ARRIVE_WELCOME_PHRASES}" --reactionApartmentRequest.dest="${REACTION_APARTMENT_REQUEST_DEST}" --reactionApartmentRequest.desc="${REACTION_APARTMENT_REQUEST_DESC}" --reactionApartmentRequest.isBuilder=${REACTION_APARTMENT_REQUEST_ISBUILDER} --reactionApartmentRequest.path="${REACTION_APARTMENT_REQUEST_PATH}"
+CMD node index.js --api.hostUrl=${API_HOST_URL} --api.webResourcePath=${API_WEB_RESOURCE_PATH} --api.origin=${API_ORIGIN} --bot.token=${BOT_TOKEN} --personality.typeSpeed=${PERSONALITY_TYPE_SPEED} --personality.readSpeed=${PERSONALITY_READ_SPEED} --actionWakeup.probability=${ACTION_WAKEUP_PROBABILITY} --reactionArriveWelcome.populationChance="${REACTION_ARRIVE_WELCOME_POPULATION_CHANCE}" --reactionArriveWelcome.priority=${REACTION_ARRIVE_WELCOME_PRIORITY} --reactionArriveWelcome.delay=${REACTION_ARRIVE_WELCOME_DELAY} --reactionArriveWelcome.phrases="${REACTION_ARRIVE_WELCOME_PHRASES}" --reactionApartmentRequest.dest="${REACTION_APARTMENT_REQUEST_DEST}" --reactionApartmentRequest.desc="${REACTION_APARTMENT_REQUEST_DESC}" --reactionApartmentRequest.isBuilder=${REACTION_APARTMENT_REQUEST_ISBUILDER} --reactionApartmentRequest.path="${REACTION_APARTMENT_REQUEST_PATH}"
