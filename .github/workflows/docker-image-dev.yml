@@ -1,4 +1,4 @@
-name: Docker Image CI
+name: Docker Development Image CI
 
 on:
   pull_request:
@@ -23,4 +23,4 @@ jobs:
         context: .
         file: ./Dockerfile
         push: true
-        tags: ${{ secrets.DOCKERHUB_USERNAME }}/c1-p1:latest,${{ secrets.DOCKERHUB_USERNAME }}/c1-p1:dev
+        tags: ${{ secrets.DOCKERHUB_USERNAME }}/c1-p1:latest,${{ secrets.DOCKERHUB_USERNAME }}/c1-p1:dev,${{ secrets.DOCKERHUB_USERNAME }}/c1-p1:pr${{ github.event.number }}
