@@ -43,8 +43,7 @@ class ActionWakeup {
 		this.module.bot.getBotPromise().then(bot => {
 			if (bot.controlled && bot.controlled.state == 'asleep') {
 				this.module.botController.enqueue('wakeup', {
-					priority: 10000,
-					hidden: true
+					priority: 10000
 				});
 			}
 		})
@@ -75,7 +74,7 @@ class ActionWakeup {
 			? Promise.resolve(ctrl)
 			: bot.call('controlChar')
 		).then(ctrl => {
-			return ctrl.call('wakeup')
+			return ctrl.call('wakeup', { hidden: true })
 				.then(() => `woke up ${ctrl.name} ${ctrl.surname}`)
 		});
 	}
