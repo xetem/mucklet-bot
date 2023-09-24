@@ -74,7 +74,7 @@ class ActionWakeup {
 			? Promise.resolve(ctrl)
 			: bot.call('controlChar')
 		).then(ctrl => {
-			return ctrl.call('wakeup')
+			return ctrl.call('wakeup', { hidden: true })
 				.then(() => `woke up ${ctrl.name} ${ctrl.surname}`)
 		});
 	}
