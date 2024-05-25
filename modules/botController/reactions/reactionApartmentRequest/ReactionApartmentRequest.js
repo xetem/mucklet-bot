@@ -125,10 +125,10 @@ class ReactionApartmentRequest {
 			this.currentTarget = ev.target.id;
 		} else if (this.inAptPass && this.currentTarget === ev.target.id){
 			this.currentTarget = null;
-			if(ev.char.name.replace(/[^\w]/g, '').length + ev.msg.length > 15 || !(/^\w+$/.test(ev.msg))) {
+			if(ev.char.name.replace(/[^\w]/g, '').length + ev.msg.length > 15 || !(/^[A-Za-z0-9-]+$/.test(ev.msg))) {
 				this.module.actionAddress.enqueue(
 					ev.char.id,
-					`I'm sorry, ${ev.char.name}, your passphrase must be \`${15 - ev.char.name.replace(/[^\w]/g, '').length}\` alphanumeric characters \`A-Za-z0-9_-\` or less. Please \`whisper\` me your preferred passphrase.`,
+					`I'm sorry, ${ev.char.name}, your passphrase must be \`${15 - ev.char.name.replace(/[^\w]/g, '').length}\` alphanumeric characters ((\`A-Z\`, \`a-z\`, \`0-9\`, or \`-\`)) or less. Please \`whisper\` me your preferred passphrase.`,
 					false,
 					100
 				);
